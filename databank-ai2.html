@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DataBank AI · Transparencia financiera</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+<style>
+@font-face{font-family:"CRT Fallback";src:local("Lucida Console"),local("Courier New"),local("Courier");size-adjust:118%;ascent-override:90%}
+:root{--bg:#0a0d10;--p:#0f141a;--p2:#141c24;--b:#1f2a33;--b2:#2c3b48;--t:#c9d4dc;--m:#6f7f8c;--ac:#3ddc84;--ac2:#56c8d8;--wa:#ffb454;--da:#ff5c5c;
+--mono:"VT323","Perfect DOS VGA 437","Px437 IBM VGA 8x16","Terminus","CRT Fallback",monospace;--head:var(--mono)}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{-webkit-font-smoothing:none;font-smooth:never;text-rendering:optimizeSpeed;font-variant-ligatures:none;background:var(--bg);color:var(--t);font:15px/1.5 var(--mono);letter-spacing:.03em;background-image:linear-gradient(rgba(61,220,132,.025) 1px,transparent 1px);background-size:100% 3px}
+button,input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
+::-webkit-scrollbar{width:9px;height:9px}::-webkit-scrollbar-thumb{background:#243240}::-webkit-scrollbar-track{background:#0a0d10}
+.app{display:grid;grid-template-columns:230px 1fr;min-height:100vh}
+aside.side{background:#0c1015;border-right:1px solid var(--b);padding:16px 12px;display:flex;flex-direction:column;gap:4px;position:sticky;top:0;height:100vh}
+.logo{display:flex;gap:10px;align-items:center;font-weight:400;font-size:17px;letter-spacing:.08em;margin-bottom:16px;color:var(--ac);text-transform:uppercase}
+.logo i{width:28px;height:28px;border:1px solid var(--ac);color:var(--ac);display:grid;place-items:center;font-style:normal;border-radius:3px;box-shadow:0 0 12px rgba(61,220,132,.25)}
+.nav{background:none;border:0;border-left:2px solid transparent;text-align:left;padding:6px 10px;color:var(--m);cursor:pointer;display:flex;gap:10px;align-items:center;font-size:14px;letter-spacing:.06em}
+.nav:hover{background:var(--p2);color:var(--t)}.nav.on{background:var(--p2);color:var(--ac);border-left-color:var(--ac)}
+.side .sp{flex:1}
+.rolebox{border:1px solid var(--b);border-radius:3px;padding:10px;font-size:13px;color:var(--m);background:var(--p)}
+.rolebox b{display:block;color:var(--ac);font-size:15px;font-weight:400;margin:2px 0}
+main{padding:20px 28px 70px;min-width:0}
+header.top{display:flex;gap:12px;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;margin-bottom:16px;border-bottom:1px solid var(--b);padding-bottom:12px}
+h1{font-size:28px;line-height:1.1;font-weight:400;margin:0;color:#fff}
+h1::before{content:"$ ";color:var(--ac)}h1::after{content:"▍";color:var(--ac);animation:blink 1.1s steps(1) infinite;margin-left:2px}
+h2{font-size:14px;font-weight:400;text-transform:uppercase;letter-spacing:.14em;color:var(--m);margin:0 0 12px}
+h2::before{content:"// ";color:var(--ac)}
+h3{font-size:16px;font-weight:400;color:#fff;margin:0 0 6px}
+.sub{color:var(--m);font-size:14px}
+@keyframes blink{50%{opacity:0}}@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(61,220,132,.6)}50%{box-shadow:0 0 0 5px rgba(61,220,132,0)}}
+.btn{background:var(--p2);border:1px solid var(--b2);padding:3px 13px;border-radius:3px;cursor:pointer;display:inline-flex;gap:6px;align-items:center;font-size:15px;color:var(--t)}
+.btn:hover{border-color:var(--ac);color:var(--ac)}
+.btn.pri{background:var(--ac);border-color:var(--ac);color:#04140b}.btn.pri:hover{background:#6af0a6;color:#04140b}
+.btn.sm{padding:0 9px;font-size:14px}.btn.ok{border-color:var(--ac2);color:var(--ac2)}.btn.ok:hover{background:rgba(86,200,216,.1)}
+.card{background:var(--p);border:1px solid var(--b);border-radius:4px;padding:16px}
+.grid{display:grid;gap:14px}.g4{grid-template-columns:repeat(4,1fr)}.g3{grid-template-columns:repeat(3,1fr)}.g2{grid-template-columns:1.4fr 1fr}
+.kpi{border-top:2px solid var(--ac)}.kpi .v{font-size:38px;line-height:1.05;margin-top:4px;color:#fff}.kpi .l{color:var(--m);font-size:13px;text-transform:uppercase;letter-spacing:.1em}.kpi .d{font-size:14px;margin-top:2px;color:var(--m)}
+.up{color:var(--ac)}.dn{color:var(--da)}
+.stepper{display:flex;margin-bottom:16px;flex-wrap:wrap;border:1px solid var(--b);border-radius:4px;background:var(--p);overflow:hidden}
+.step{flex:1;min-width:150px;border-right:1px solid var(--b);padding:6px 12px;cursor:pointer;display:flex;gap:10px;align-items:center;font-size:14px;color:var(--m)}
+.step:last-child{border-right:0}.step:hover{background:var(--p2)}
+.step b{display:grid;place-items:center;width:20px;height:20px;border:1px solid var(--b2);border-radius:50%;font-size:13px;font-weight:400;color:var(--m)}
+.step.done{color:var(--ac)}.step.done b{background:var(--ac);color:#04140b;border-color:var(--ac)}
+.step.cur{background:var(--p2);color:#fff;box-shadow:inset 0 -2px var(--wa)}.step.cur b{border-color:var(--wa);color:var(--wa)}
+.hint{display:flex;gap:12px;align-items:center;justify-content:space-between;background:#0c1f16;border:1px solid #1c4d33;border-left:3px solid var(--ac);border-radius:3px;padding:6px 14px;margin-bottom:14px;flex-wrap:wrap;color:#b6f0cf}
+.pill{display:inline-block;padding:0 7px;border:1px solid currentColor;border-radius:2px;font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--m)}
+.p-alto{color:var(--da);background:rgba(255,92,92,.1)}.p-medio{color:var(--wa);background:rgba(255,180,84,.1)}.p-bajo{color:var(--ac);background:rgba(61,220,132,.08)}
+.p-st{color:var(--m)}
+.live{color:var(--ac)}.live::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--ac);margin-right:6px;animation:pulse 1.8s infinite}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.chip{background:var(--p2);border:1px solid var(--b2);border-radius:3px;padding:1px 10px;cursor:pointer;font-size:14.5px;color:var(--t)}.chip::before{content:"› ";color:var(--ac)}.chip:hover{border-color:var(--ac);color:var(--ac)}
+.qbox{display:flex;gap:10px;align-items:stretch}.qbox textarea{flex:1;background:#080b0e;border:1px solid var(--b2);border-radius:3px;padding:10px 12px;resize:none;height:54px;color:var(--ac);font-size:17px}
+.qbox textarea::placeholder{color:#3d4b57}
+textarea:focus,input:focus,select:focus{outline:none;border-color:var(--ac);box-shadow:0 0 0 1px rgba(61,220,132,.35)}
+input,select,textarea{background:#080b0e;border:1px solid var(--b2);border-radius:3px;padding:3px 10px;font-size:15px}
+pre.sql{background:#080b0e;border:1px solid var(--b);border-left:2px solid var(--ac);border-radius:3px;padding:10px 12px;overflow:auto;font:16px/1.4 var(--mono);margin:8px 0;white-space:pre-wrap;color:#d7e2ea}
+.kw{color:var(--ac2)}.str{color:var(--wa)}
+.tags{display:flex;gap:6px;flex-wrap:wrap}.tag{font-size:13px;color:var(--ac);border:1px solid #1c4d33;background:#0c1f16;padding:0 7px;border-radius:2px}
+.pipe{display:flex;flex-wrap:wrap;margin:12px 0;border:1px solid var(--b);border-radius:4px;background:var(--p);overflow:hidden}
+.ps{font-size:13.5px;padding:4px 10px;color:#3d4b57;border-right:1px solid var(--b);flex:1;min-width:150px}
+.ps:last-child{border-right:0}.ps.act{color:var(--wa);background:rgba(255,180,84,.06)}.ps.ok{color:var(--ac)}
+.tabs{display:flex;gap:2px;margin:0}.tab{padding:2px 14px;cursor:pointer;color:var(--m);background:none;border:1px solid transparent;border-radius:3px;font-size:15px}.tab:hover{color:var(--t)}.tab.on{background:var(--p2);color:var(--ac);border-color:var(--b2)}
+table{width:100%;border-collapse:collapse;font-size:14.5px}
+th{position:sticky;top:0;text-align:left;color:var(--m);background:#0c1117;font-weight:400;padding:5px 10px;cursor:pointer;white-space:nowrap;text-transform:uppercase;font-size:13px;letter-spacing:.1em;border-bottom:1px solid var(--b2)}
+th:hover{color:var(--ac)}
+td{padding:4px 10px;border-bottom:1px solid #18222b;white-space:nowrap}tr.click:hover td{background:var(--p2);cursor:pointer}tr.click:hover td:first-child{box-shadow:inset 2px 0 var(--ac)}
+.tw{overflow:auto;max-height:420px;border:1px solid var(--b);border-radius:4px}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.sc{display:inline-block;min-width:32px;text-align:center;padding:0 6px;font-size:14px;border:1px solid currentColor;border-radius:2px}
+.chart{width:100%;height:auto}.tl{fill:#7d8d9a;font-size:13px;font-family:var(--mono)}.tv{fill:#c9d4dc;font-size:14px;font-family:var(--mono)}line.grid{stroke:#2c3b48;stroke-dasharray:2 4}
+.arch{display:flex;gap:6px;align-items:stretch;flex-wrap:wrap}
+.node{flex:1;min-width:120px;background:var(--p2);border:1px solid var(--b);border-radius:3px;padding:8px;font-size:13.5px}
+.node b{display:block;font-weight:400;font-size:15px;color:#fff}.node .st{color:var(--m)}.node .lat{color:var(--ac)}
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--ac);margin-right:6px;animation:pulse 2s infinite}
+.ar{align-self:center;color:var(--b2)}
+.alert{display:flex;gap:10px;align-items:center;padding:6px 6px;border-bottom:1px solid #18222b;cursor:pointer}.alert:last-child{border:0}
+.alert:hover{background:var(--p2)}
+.alert .a1{flex:1;min-width:0}.alert .a1 div{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rolecard{cursor:pointer;transition:.12s}.rolecard:hover,.rolecard.on{border-color:var(--ac)!important;box-shadow:0 0 16px rgba(61,220,132,.12)}
+.rolecard .ic{font-size:22px;filter:grayscale(1) brightness(1.4)}
+.overlay{position:fixed;inset:0;background:rgba(2,4,6,.8);display:none;place-items:center;z-index:50;padding:16px}.overlay.show{display:grid}
+.modal{background:var(--p);border:1px solid var(--ac);border-radius:6px;box-shadow:0 0 50px rgba(61,220,132,.1);max-width:860px;width:100%;padding:24px;max-height:90vh;overflow:auto}
+.drawer{position:fixed;top:0;right:0;height:100%;width:440px;max-width:100%;background:#0c1116;border-left:1px solid var(--ac);transform:translateX(105%);transition:.22s;z-index:40;padding:20px;overflow:auto}.drawer.show{transform:none}
+.fac{display:flex;align-items:center;gap:8px;margin:4px 0;font-size:14.5px}.fac .bar{flex:1;height:6px;background:#080b0e;border:1px solid var(--b);overflow:hidden}.fac .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--wa),var(--da))}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#0c1f16;border:1px solid var(--ac);color:var(--ac);padding:3px 16px;border-radius:3px;z-index:99;display:none;font-size:16px}
+.toast::before{content:"✓ "}.toast.show{display:block}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.mt{margin-top:14px}
+.legend{display:flex;gap:14px;font-size:14px;color:var(--m);margin-top:6px}.legend i{display:inline-block;width:9px;height:9px;border-radius:1px;margin-right:5px}
+.rep{background:#f3f5f7;color:#111;border-radius:3px;padding:24px;font-size:13px;font-family:system-ui,sans-serif;-webkit-font-smoothing:auto;text-rendering:auto;letter-spacing:0}.rep .sub{color:#667;font-size:12px}
+.rep h2{color:#0a1b44;font-size:18px;text-transform:none;letter-spacing:0}.rep h2::before{content:""}.rep h3{color:#0a1b44;font-size:14px}
+.rep table{color:#111;font-size:12px}.rep th{background:#e3e8ee;color:#333;border-color:#c9d1da;font-size:11px}.rep td{border-color:#d9e0e7}
+.rep .kv{display:flex;gap:20px;flex-wrap:wrap;margin:10px 0}.rep .kv div{background:#e8edf2;padding:8px 14px;border-radius:4px;border-left:3px solid #1a9e5c}.rep .kv b{font-size:16px}
+.mono{font-family:var(--mono);font-size:14px}
+@media(max-width:980px){.app{grid-template-columns:1fr}aside.side{position:static;height:auto;flex-direction:row;flex-wrap:wrap;align-items:center;border-right:0;border-bottom:1px solid var(--b)}.side .sp,.rolebox{display:none}.g4,.g3,.g2{grid-template-columns:1fr 1fr}.logo{margin:0 10px 0 0}}
+@media(max-width:620px){.g4,.g3,.g2{grid-template-columns:1fr}main{padding:14px}h1{font-size:22px}}
+.nav .sh,.mob{display:none}.nav .nn{opacity:.8}.grid>*{min-width:0}.cw{overflow-x:auto}
+@media(max-width:760px){
+ html,body{overflow-x:hidden}
+ aside.side{position:fixed;top:auto;bottom:0;left:0;right:0;height:auto;flex-direction:row;flex-wrap:nowrap;gap:0;padding:0 0 env(safe-area-inset-bottom);z-index:30;background:#0c1015;border-right:0;border-top:1px solid var(--b);border-bottom:0}
+ aside.side .logo,aside.side .nav:not([data-v]),aside.side .rolebox,aside.side .sp{display:none}
+ .nav[data-v]{flex:1;flex-direction:column;gap:0;align-items:center;justify-content:center;padding:6px 2px 7px;border-left:0;border-top:2px solid transparent;min-height:52px;font-size:14px;line-height:1.05;text-align:center}
+ .nav[data-v].on{border-top-color:var(--ac);background:var(--p2)}
+ .nav .lg{display:none}.nav .sh{display:inline}.nav .nn{font-size:12px;color:var(--m)}.nav.on .nn{color:var(--ac)}
+ main{padding:12px 12px calc(84px + env(safe-area-inset-bottom))}
+ header.top{align-items:flex-start;gap:8px;margin-bottom:12px}
+ header.top>div:first-child{width:100%}
+ header.top .row{gap:6px}.mob{display:flex;gap:6px}.pill.eje{display:none}#clock{display:none}
+ h1{font-size:22px}.sub{font-size:13px}
+ .stepper{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch}.step{min-width:128px;flex:none;font-size:13px;padding:6px 10px;white-space:nowrap}
+ .g4{grid-template-columns:1fr 1fr!important}.g3,.g2,.grid[style]{grid-template-columns:1fr!important}
+ .grid{gap:10px}.card{padding:12px}
+ .kpi .v{font-size:30px}
+ .hint{flex-direction:column;align-items:flex-start;gap:6px}
+ .qbox{flex-direction:column}.qbox textarea{height:104px;font-size:17px}.qbox .btn{justify-content:center;min-height:40px}
+ .btn{min-height:36px}.btn.sm{min-height:32px}.chip{padding:5px 11px}
+ .row>input[data-input],.row>select{flex:1 1 100%;min-height:38px}
+ .ps{min-width:50%}
+ .hm,.ar{display:none}
+ .node{flex:1 1 44%;min-width:0}
+ .tw{max-height:62vh}th,td{padding:6px 8px}
+ .cw .chart{min-width:560px}
+ pre.sql{font-size:15px}
+ .drawer{width:100%;padding:14px;border-left:0}.drawer td{white-space:normal;word-break:break-word}
+ .modal{padding:16px;max-height:92vh}.modal .grid{grid-template-columns:1fr!important}
+ .overlay{padding:8px;align-items:end}
+ .toast{bottom:calc(70px + env(safe-area-inset-bottom));max-width:92vw}
+ .rep{padding:14px;overflow-x:auto}
+ .alert .a1 div{white-space:normal}
+ #reppane .row.noprint{flex-direction:column;align-items:stretch}
+}
+@media(max-width:380px){.g4{grid-template-columns:1fr!important}h1{font-size:20px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
+@media print{aside.side,header.top,.stepper,.hint,.noprint,.drawer{display:none!important}.app{display:block}body{background:#fff;background-image:none}main{padding:0}.rep{padding:0}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="logo"><i>D</i> DataBank&nbsp;AI</div>
+    <button class="nav" data-act="nav" data-v="home"><span class="nn">[01]</span><span class="lg">Inicio / Panel</span><span class="sh">Inicio</span></button>
+    <button class="nav" data-act="nav" data-v="query"><span class="nn">[02]</span><span class="lg">Consulta NL → SQL</span><span class="sh">Consulta</span></button>
+    <button class="nav" data-act="nav" data-v="anom"><span class="nn">[03]</span><span class="lg">Anomalías y seguimiento</span><span class="sh">Anomalías</span></button>
+    <button class="nav" data-act="nav" data-v="rep"><span class="nn">[04]</span><span class="lg">Reportes y trazabilidad</span><span class="sh">Reportes</span></button>
+    <div class="sp"></div>
+    <button class="nav" data-act="problem">[!] Problemática</button>
+    <div class="rolebox" id="rolebox"></div>
+    <button class="nav" data-act="chooseRole">[~] Cambiar rol</button>
+  </aside>
+  <main>
+    <header class="top">
+      <div><h1 id="title"></h1><div class="sub" id="subtitle"></div></div>
+      <div class="row"><span class="pill" id="threat"></span><span class="pill live">live</span><span class="pill p-st" id="clock"></span><span class="mob"><button class="btn sm" data-act="problem">[!]</button><button class="btn sm" id="mrole" data-act="chooseRole">Rol</button></span><span class="pill p-st eje">Eje 5 · Transparencia y acceso a la información financiera</span><span class="pill p-st">Datos simulados</span></div>
+    </header>
+    <div class="stepper" id="stepper"></div>
+    <div id="view"></div>
+  </main>
+</div>
+
+<div class="drawer" id="drawer"></div>
+<div class="overlay" id="ov"><div class="modal" id="modal"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============ Utilidades ============ */
+const $=(s,r=document)=>r.querySelector(s);
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const fmt=n=>'$'+Math.round(n).toLocaleString('es-MX');
+const fmtS=n=>n>=1e6?'$'+(n/1e6).toFixed(1)+'M':n>=1e3?'$'+(n/1e3).toFixed(0)+'k':'$'+Math.round(n);
+const sum=a=>a.reduce((x,y)=>x+y,0);
+const norm=s=>s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+const trunc=(s,n)=>s.length>n?s.slice(0,n-1)+'…':s;
+const lvl=s=>s>=75?'Alto':s>=45?'Medio':'Bajo';
+const scCol=s=>s>=75?['rgba(255,92,92,.12)','#ff5c5c']:s>=45?['rgba(255,180,84,.12)','#ffb454']:['rgba(61,220,132,.1)','#3ddc84'];
+const scBar=s=>s>=75?'#ff5c5c':s>=45?'#ffb454':'#3ddc84';
+const scoreB=s=>{const c=scCol(s);return `<span class="sc" style="background:${c[0]};color:${c[1]}">${s}</span>`};
+const lvlB=s=>`<span class="pill p-${lvl(s).toLowerCase()}">${lvl(s)}</span>`;
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove('show'),2200)}
+function rng(seed){return()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function fnv(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return(h>>>0).toString(16).padStart(8,'0')}
+const dstr=dn=>new Date(dn*864e5).toISOString().slice(0,10);
+const BASE=Math.floor(Date.UTC(2026,7,25)/864e5), TODAY=BASE+91;
+const dnOf=s=>{const[y,m,d]=s.split('-').map(Number);return Math.floor(Date.UTC(y,m-1,d)/864e5)};
+const MES=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+
+/* ============ Datos simulados ============ */
+const R=rng(2611),pick=a=>a[Math.floor(R()*a.length)];
+const AREAS={'Tesorería':[80e3,900e3],'Crédito':[30e3,400e3],'Nómina':[200e3,600e3],'Adquisiciones':[15e3,250e3],'Obra Pública':[100e3,1.2e6]};
+const CPE=['Proveeduría Norte SA de CV','Servicios Logísticos Meridian','Constructora Altiplano SA','Tecnoservicios Pacífico','Consultoría Atlas SC','Distribuidora Bajío','Inmobiliaria Cuauhtémoc','Fundación Horizonte AC','Energía y Mantenimiento Sur','Papelería Institucional MX'];
+const CPI=['Participaciones Federales','Recaudación Local','Cobranza Cartera Crédito','Aportaciones de Socios','Rendimientos de Inversión'];
+const ACCS=['012180004418823317','012180009920145562','072180001207733491','012180003356802148'];
+const NUEVAS=new Set(['Comercializadora Delta 7','Grupo Aurora Holdings Ltd (Offshore)']);
+const OFF=new Set(['Grupo Aurora Holdings Ltd (Offshore)']);
+const TX=[];
+for(let i=0;i<108;i++){
+  const tipo=R()<.35?'Ingreso':'Egreso',area=pick(Object.keys(AREAS)),[lo,hi]=AREAS[area];
+  const monto=Math.round((lo+Math.pow(R(),1.8)*(hi-lo))/10)*10;
+  const hora=R()<.95?8+Math.floor(R()*10):pick([1,2,23,5]);
+  TX.push({dn:BASE+Math.floor(R()*91),hora,min:Math.floor(R()*60),tipo,area,monto,
+    cp:tipo==='Ingreso'?pick(CPI):pick(CPE),canal:tipo==='Egreso'&&R()<.04?'Internacional':pick(['SPEI','SPEI','SPEI','Banca digital','Ventanilla','Cheque']),cuenta:pick(ACCS)});
+}
+const man=(d,h,m,tipo,area,monto,cp,canal,cuenta)=>TX.push({dn:dnOf(d),hora:h,min:m,tipo,area,monto,cp,canal,cuenta});
+man('2026-11-18',3,12,'Egreso','Tesorería',1850000,'Grupo Aurora Holdings Ltd (Offshore)','Internacional',ACCS[0]);
+man('2026-11-19',15,4,'Egreso','Adquisiciones',98500,'Comercializadora Delta 7','SPEI',ACCS[1]);
+man('2026-11-20',16,41,'Egreso','Adquisiciones',97200,'Comercializadora Delta 7','SPEI',ACCS[1]);
+man('2026-11-21',10,9,'Egreso','Adquisiciones',99100,'Comercializadora Delta 7','SPEI',ACCS[1]);
+man('2026-11-21',17,33,'Egreso','Adquisiciones',96800,'Comercializadora Delta 7','Banca digital',ACCS[1]);
+man('2026-11-12',11,20,'Egreso','Obra Pública',640000,'Constructora Altiplano SA','SPEI',ACCS[2]);
+man('2026-11-14',11,22,'Egreso','Obra Pública',640000,'Constructora Altiplano SA','SPEI',ACCS[2]);
+man('2026-11-22',23,47,'Egreso','Tesorería',480000,'Consultoría Atlas SC','Banca digital',ACCS[0]);
+man('2026-11-10',12,0,'Egreso','Tesorería',500000,'Fundación Horizonte AC','Ventanilla',ACCS[3]);
+man('2026-11-23',2,5,'Egreso','Obra Pública',720000,'Servicios Logísticos Meridian','SPEI',ACCS[2]);
+TX.sort((a,b)=>a.dn-b.dn||a.hora-b.hora||a.min-b.min);
+TX.forEach((t,i)=>{t.id='TX-'+String(20400+i*7);t.fecha=dstr(t.dn);t.hh=String(t.hora).padStart(2,'0')+':'+String(t.min).padStart(2,'0');t.nueva=NUEVAS.has(t.cp);t.off=OFF.has(t.cp)||t.canal==='Internacional'});
+const AS={};Object.keys(AREAS).forEach(a=>{const v=TX.filter(t=>t.area===a).map(t=>t.monto),m=sum(v)/v.length;AS[a]={m,s:Math.sqrt(sum(v.map(x=>(x-m)**2))/v.length)||1}});
+TX.forEach(t=>{
+  const f=[];const z=(t.monto-AS[t.area].m)/AS[t.area].s;
+  if(z>1)f.push({l:`Monto atípico para ${t.area} (z=${z.toFixed(1)})`,p:Math.min(40,Math.round(z*14))});
+  if(t.hora<5||t.hora>=22)f.push({l:`Horario inusual (${t.hh})`,p:26});
+  if(t.nueva)f.push({l:'Contraparte nueva sin historial',p:22});
+  if(t.off)f.push({l:'Destino internacional / offshore',p:18});
+  if(t.monto>=90000&&t.monto<100000)f.push({l:'Monto cercano al umbral de reporte ($100,000)',p:30});
+  if(t.monto>=90000&&t.monto<100000&&TX.filter(o=>o.cp===t.cp&&o.monto>=90000&&o.monto<100000).length>=3)f.push({l:'Patrón repetido de pagos fraccionados (≥3 en pocos días)',p:20});
+  if(TX.some(o=>o!==t&&o.cp===t.cp&&o.monto===t.monto&&Math.abs(o.dn-t.dn)<=5))f.push({l:'Posible pago duplicado (mismo monto y contraparte ≤5 días)',p:32});
+  if(t.monto>=200000&&t.monto%50000===0)f.push({l:'Monto redondo elevado',p:8});
+  const base=4+Math.floor(R()*10);t.base=base;t.f=f;t.score=Math.min(99,base+sum(f.map(x=>x.p)));
+  t.estado=t.score>=75?(R()<.55?'Pendiente':'En revisión'):t.score>=45?(R()<.5?'Pendiente':'Cerrada'):'Cerrada';
+  t.nota='';
+});
+TX.filter(t=>t.cp==='Comercializadora Delta 7').forEach(t=>t.estado='Pendiente');
+
+/* ============ Estado ============ */
+const S={role:null,view:'home',done:{rol:false,consulta:false,anomalia:false,reporte:false},res:null,tab:'tabla',filter:'',sort:null,running:false,anf:{lvl:'',st:'',q:''},rep:null,log:[]};
+const ROLES={
+ Auditor:{ic:'🔍',d:'Revisa operaciones, verifica evidencia y trazabilidad. Ve cuentas completas.',perm:'Lectura completa · cuentas sin enmascarar',mask:false,pre:['riesgo','fracc','horario','conc']},
+ 'Analista Financiero':{ic:'📊',d:'Explora flujos, tendencias y concentración sin escribir SQL.',perm:'Lectura analítica · cuentas enmascaradas',mask:true,pre:['flujo','area','altos','conc']},
+ 'Administrador Institucional':{ic:'🏛️',d:'Supervisa el estado general, asigna revisiones y descarga reportes.',perm:'Lectura + asignación · cuentas enmascaradas',mask:true,pre:['area','flujo','riesgo','altos']}
+};
+let lastHash='00000000';
+function logA(action,detail,user,ts){const e={ts:ts||new Date().toLocaleString('es-MX',{dateStyle:'short',timeStyle:'medium'}),user:user||S.role||'Sistema',action,detail};e.hash=fnv(lastHash+e.ts+e.user+action+detail);lastHash=e.hash;S.log.push(e)}
+[['2026-11-23 08:01','Sistema','Ingesta','Carga incremental BigQuery: 412 operaciones nuevas'],['2026-11-23 08:04','Sistema','Modelo ML','Vertex AI puntuó 412 operaciones (3 alertas altas)'],['2026-11-23 09:15','Auditor','Consulta NL','"Operaciones de riesgo alto pendientes" → 6 filas'],['2026-11-23 10:40','Administrador Institucional','Asignación','TX-20406 asignada a equipo de auditoría interna']].forEach(x=>logA(x[2],x[3],x[1],x[0]));
+
+/* ============ Gráficas SVG ============ */
+function hbar(labels,values,f,colors){const max=Math.max(...values,1),rh=34,W=640,L=200;let s=`<svg viewBox="0 0 ${W} ${labels.length*rh+10}" class="chart">`;
+ labels.forEach((l,i)=>{const y=i*rh+6,w=(W-L-110)*values[i]/max;s+=`<text x="${L-8}" y="${y+16}" text-anchor="end" class="tl">${esc(trunc(l,28))}</text><rect x="${L}" y="${y+2}" width="${Math.max(w,2)}" height="20" rx="0" fill="${colors?colors[i]:'#56c8d8'}"/><text x="${L+w+8}" y="${y+17}" class="tv">${f(values[i])}</text>`});return '<div class="cw">'+s+'</svg></div>'}
+function vgroup(labels,series,f){const W=640,H=270,pl=58,pb=28,pt=12,max=Math.max(...series.flatMap(s=>s.values),1),gw=(W-pl-10)/labels.length,bw=Math.min(34,gw/(series.length+1));
+ let s=`<svg viewBox="0 0 ${W} ${H}" class="chart">`;
+ for(let i=0;i<=4;i++){const y=pt+(H-pt-pb)*(1-i/4);s+=`<line x1="${pl}" x2="${W-6}" y1="${y}" y2="${y}" class="grid"/><text x="${pl-6}" y="${y+4}" text-anchor="end" class="tl">${f(max*i/4)}</text>`}
+ labels.forEach((l,i)=>{const gx=pl+gw*i+gw/2-bw*series.length/2;series.forEach((se,j)=>{const h=(H-pt-pb)*se.values[i]/max;s+=`<rect x="${gx+j*bw}" y="${H-pb-h}" width="${bw-3}" height="${Math.max(h,1)}" rx="0" fill="${se.color}"><title>${se.name}: ${f(se.values[i])}</title></rect>`});s+=`<text x="${pl+gw*i+gw/2}" y="${H-9}" text-anchor="middle" class="tl">${l}</text>`});
+ return '<div class="cw">'+s+'</svg></div>'}
+const legend=ss=>`<div class="legend">${ss.map(s=>`<span><i style="background:${s.color}"></i>${s.name}</span>`).join('')}</div>`;
+
+/* ============ Motor NL → SQL (simulado) ============ */
+const Q={
+ altos:{label:'Transferencias mayores a $500,000 (90 días)',nl:'Muestra las transferencias mayores a $500,000 de los últimos 90 días',kw:['mayor','500','transfer','grande','monto alto'],
+  run(q){let th=500000;const m=norm(q||'').match(/\$?\s*(\d[\d,\.]*)\s*(mil|k|millones|mdp)?/g);
+   (m||[]).forEach(x=>{const mm=x.match(/(\d[\d,\.]*)\s*(mil|k|millones|mdp)?/);let n=parseFloat(mm[1].replace(/,/g,''));if(mm[2]==='mil'||mm[2]==='k')n*=1e3;if(mm[2]==='millones'||mm[2]==='mdp')n*=1e6;if(n>=10000)th=n});
+   const rows=TX.filter(t=>t.tipo==='Egreso'&&t.monto>th).sort((a,b)=>b.monto-a.monto);
+   const hi=rows.filter(r=>r.score>=75);
+   return{sql:`SELECT id_operacion, fecha, contraparte, area, canal, monto, score_riesgo\nFROM operaciones\nWHERE tipo = 'Egreso'\n  AND monto > ${th}\n  AND fecha >= DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)\nORDER BY monto DESC\nLIMIT 1000;`,
+    cols:tcols(['id','fecha','cp','area','canal','monto','score']),rows,chart:{t:'h',labels:rows.slice(0,8).map(r=>r.cp+' · '+r.id.slice(3)),values:rows.slice(0,8).map(r=>r.monto),f:fmtS,colors:rows.slice(0,8).map(r=>scBar(r.score))},
+    sum:`Se encontraron <b>${rows.length}</b> egresos por encima de <b>${fmt(th)}</b>, que suman <b>${fmt(sum(rows.map(r=>r.monto)))}</b>. ${hi.length?`<b>${hi.length}</b> de ellos tienen riesgo alto; el más relevante es ${hi[0].id} por ${fmt(hi[0].monto)} a ${esc(hi[0].cp)}.`:'Ninguno presenta riesgo alto.'}`}}},
+ conc:{label:'Contrapartes con mayor monto este mes',nl:'¿Qué contrapartes concentran más monto este mes?',kw:['contraparte','concentr','proveedor','beneficiario'],
+  run(){const nov=TX.filter(t=>t.tipo==='Egreso'&&t.fecha>='2026-11-01'),g={};nov.forEach(t=>{(g[t.cp]=g[t.cp]||[]).push(t)});const tot=sum(nov.map(t=>t.monto));
+   const rows=Object.entries(g).map(([cp,a])=>({cp,n:a.length,monto:sum(a.map(x=>x.monto)),pct:sum(a.map(x=>x.monto))/tot*100,score:Math.max(...a.map(x=>x.score))})).sort((a,b)=>b.monto-a.monto).slice(0,8);
+   return{sql:`SELECT contraparte, COUNT(*) AS operaciones,\n       SUM(monto) AS monto_total,\n       ROUND(100 * SUM(monto) / SUM(SUM(monto)) OVER (), 1) AS pct,\n       MAX(score_riesgo) AS score_max\nFROM operaciones\nWHERE tipo = 'Egreso' AND EXTRACT(MONTH FROM fecha) = 11\nGROUP BY contraparte\nORDER BY monto_total DESC\nLIMIT 8;`,
+    cols:[{k:'cp',l:'Contraparte'},{k:'n',l:'Operaciones',t:'num'},{k:'monto',l:'Monto total',t:'money'},{k:'pct',l:'% del mes',t:'pct'},{k:'score',l:'Score máx.',t:'score'}],rows,
+    chart:{t:'h',labels:rows.map(r=>r.cp),values:rows.map(r=>r.monto),f:fmtS},
+    sum:`En noviembre, las 3 principales contrapartes concentran <b>${rows.slice(0,3).reduce((a,r)=>a+r.pct,0).toFixed(1)}%</b> del egreso total (${fmt(tot)}). <b>${esc(rows[0].cp)}</b> lidera con ${fmt(rows[0].monto)}. ${rows.filter(r=>r.score>=75).length?`Atención: ${rows.filter(r=>r.score>=75).map(r=>esc(r.cp)).join(', ')} tiene operaciones de riesgo alto.`:''}`}}},
+ riesgo:{label:'Operaciones de riesgo alto pendientes de revisión',nl:'Muestra las operaciones de riesgo alto que aún no han sido revisadas',kw:['riesgo alto','pendiente','revisi','alert','sin revisar'],
+  run(){const rows=TX.filter(t=>t.score>=75&&t.estado!=='Cerrada').sort((a,b)=>b.score-a.score);
+   return{sql:`SELECT id_operacion, fecha, contraparte, area, monto, score_riesgo, estado_revision\nFROM operaciones o\nJOIN scores_anomalia s USING (id_operacion)\nWHERE s.score_riesgo >= 75\n  AND estado_revision <> 'Cerrada'\nORDER BY score_riesgo DESC;`,
+    cols:tcols(['id','fecha','cp','area','monto','score','estado']),rows,chart:{t:'h',labels:rows.map(r=>r.id+' · '+r.cp),values:rows.map(r=>r.score),f:v=>v,colors:rows.map(r=>scBar(r.score))},
+    sum:`Hay <b>${rows.length}</b> operaciones de riesgo alto abiertas por un total de <b>${fmt(sum(rows.map(r=>r.monto)))}</b>. ${rows.filter(r=>r.estado==='Pendiente').length} aún no tienen revisor asignado. Se recomienda priorizar ${rows[0]?rows[0].id:'—'} (score ${rows[0]?rows[0].score:'—'}).`}}},
+ flujo:{label:'Flujo mensual de ingresos vs. egresos',nl:'Compara el flujo mensual de ingresos contra egresos',kw:['flujo','ingreso','egreso','mensual','tendencia'],
+  run(){const ms=[7,8,9,10],rows=ms.map(m=>{const a=TX.filter(t=>new Date(t.dn*864e5).getUTCMonth()===m);const i=sum(a.filter(t=>t.tipo==='Ingreso').map(t=>t.monto)),e=sum(a.filter(t=>t.tipo==='Egreso').map(t=>t.monto));return{mes:MES[m]+(m===7?' (parcial)':''),i,e,net:i-e}});
+   const worst=rows.reduce((a,b)=>b.net<a.net?b:a);
+   return{sql:`SELECT FORMAT_DATE('%b', fecha) AS mes,\n       SUM(IF(tipo='Ingreso', monto, 0)) AS ingresos,\n       SUM(IF(tipo='Egreso',  monto, 0)) AS egresos,\n       SUM(IF(tipo='Ingreso', monto, -monto)) AS neto\nFROM operaciones\nWHERE fecha >= '2026-08-25'\nGROUP BY mes ORDER BY MIN(fecha);`,
+    cols:[{k:'mes',l:'Mes'},{k:'i',l:'Ingresos',t:'money'},{k:'e',l:'Egresos',t:'money'},{k:'net',l:'Neto',t:'money'}],rows,
+    chart:{t:'g',labels:rows.map(r=>r.mes.replace(' (parcial)','*')),series:[{name:'Ingresos',color:'#3ddc84',values:rows.map(r=>r.i)},{name:'Egresos',color:'#56c8d8',values:rows.map(r=>r.e)}],f:fmtS},
+    sum:`El flujo neto acumulado del periodo es <b>${fmt(sum(rows.map(r=>r.net)))}</b>. El mes con mayor presión de caja fue <b>${worst.mes}</b> (neto ${fmt(worst.net)}). *Agosto solo incluye desde el día 25.`}}},
+ fracc:{label:'Pagos fraccionados cerca del umbral de $100,000',nl:'Detecta pagos fraccionados cercanos al umbral de reporte de $100,000',kw:['fraccion','umbral','estructur','100,000','dividid','pitufeo'],
+  run(){const rows=TX.filter(t=>t.monto>=90000&&t.monto<100000).sort((a,b)=>a.cp.localeCompare(b.cp)||a.dn-b.dn);const g={};rows.forEach(r=>g[r.cp]=(g[r.cp]||0)+1);const top=Object.entries(g).sort((a,b)=>b[1]-a[1])[0];
+   return{sql:`SELECT contraparte, id_operacion, fecha, monto,\n       COUNT(*) OVER (PARTITION BY contraparte) AS pagos_en_rango\nFROM operaciones\nWHERE monto BETWEEN 90000 AND 99999\n  AND fecha >= DATE_SUB(CURRENT_DATE(), INTERVAL 90 DAY)\nORDER BY pagos_en_rango DESC, fecha;`,
+    cols:tcols(['id','fecha','cp','monto','canal','score']),rows,chart:{t:'h',labels:rows.map(r=>r.id+' · '+r.fecha.slice(5)),values:rows.map(r=>r.monto),f:fmtS,colors:rows.map(r=>scBar(r.score))},
+    sum:rows.length?`Se identificaron <b>${rows.length}</b> pagos entre $90,000 y $99,999. ${top&&top[1]>=3?`<b>${esc(top[0])}</b> recibió <b>${top[1]}</b> pagos en rango en 3 días, patrón compatible con <b>fraccionamiento para evitar el umbral de reporte</b>. Se sugiere escalar a auditoría.`:'No se observa un patrón de repetición.'}`:'No se encontraron pagos en el rango.'}}},
+ horario:{label:'Operaciones en horario inusual (22:00–05:00)',nl:'Operaciones realizadas en horario inusual, de madrugada o noche',kw:['horario','madrugada','noche','inusual','hora'],
+  run(){const rows=TX.filter(t=>t.hora<5||t.hora>=22).sort((a,b)=>b.score-a.score);
+   return{sql:`SELECT id_operacion, fecha, hora, contraparte, canal, monto, score_riesgo\nFROM operaciones\nWHERE EXTRACT(HOUR FROM hora) >= 22\n   OR EXTRACT(HOUR FROM hora) < 5\nORDER BY score_riesgo DESC;`,
+    cols:tcols(['id','fecha','hh','cp','canal','monto','score']),rows,chart:{t:'h',labels:rows.map(r=>r.id+' · '+r.hh),values:rows.map(r=>r.monto),f:fmtS,colors:rows.map(r=>scBar(r.score))},
+    sum:`Se registraron <b>${rows.length}</b> operaciones fuera del horario hábil por <b>${fmt(sum(rows.map(r=>r.monto)))}</b>; <b>${rows.filter(r=>r.score>=75).length}</b> con riesgo alto. ${rows.length?`La de mayor monto es ${rows.slice().sort((a,b)=>b.monto-a.monto)[0].id}.`:''}`}}},
+ area:{label:'Monto y riesgo promedio por área',nl:'Muestra el monto total y el riesgo promedio por área',kw:['area','departamento','promedio','por area'],
+  run(){const rows=Object.keys(AREAS).map(a=>{const x=TX.filter(t=>t.area===a);return{area:a,n:x.length,monto:sum(x.map(t=>t.monto)),prom:Math.round(sum(x.map(t=>t.score))/x.length),alt:x.filter(t=>t.score>=75).length}}).sort((a,b)=>b.monto-a.monto);
+   return{sql:`SELECT area, COUNT(*) AS operaciones, SUM(monto) AS monto_total,\n       ROUND(AVG(score_riesgo)) AS score_promedio,\n       COUNTIF(score_riesgo >= 75) AS alertas_altas\nFROM operaciones\nGROUP BY area\nORDER BY monto_total DESC;`,
+    cols:[{k:'area',l:'Área'},{k:'n',l:'Operaciones',t:'num'},{k:'monto',l:'Monto total',t:'money'},{k:'prom',l:'Score prom.',t:'score'},{k:'alt',l:'Alertas altas',t:'num'}],rows,
+    chart:{t:'h',labels:rows.map(r=>r.area),values:rows.map(r=>r.monto),f:fmtS},
+    sum:`<b>${rows[0].area}</b> concentra el mayor monto (${fmt(rows[0].monto)}). El área con mayor riesgo promedio es <b>${rows.slice().sort((a,b)=>b.prom-a.prom)[0].area}</b> (score ${rows.slice().sort((a,b)=>b.prom-a.prom)[0].prom}).`}}}
+};
+function tcols(ks){const M={id:{k:'id',l:'ID'},fecha:{k:'fecha',l:'Fecha'},hh:{k:'hh',l:'Hora'},cp:{k:'cp',l:'Contraparte'},area:{k:'area',l:'Área'},canal:{k:'canal',l:'Canal'},monto:{k:'monto',l:'Monto',t:'money'},score:{k:'score',l:'Score',t:'score'},estado:{k:'estado',l:'Estado',t:'st'}};return ks.map(k=>M[k])}
+function matchQ(text){const t=norm(text);let best=null,bs=0;for(const[k,d]of Object.entries(Q)){const s=d.kw.reduce((a,w)=>a+(t.includes(norm(w))?1:0),0);if(s>bs){bs=s;best=k}}return best}
+const hlSQL=s=>esc(s).replace(/\b(SELECT|FROM|WHERE|AND|OR|GROUP BY|ORDER BY|LIMIT|HAVING|JOIN|USING|AS|DESC|BETWEEN|COUNT|COUNTIF|SUM|AVG|MAX|MIN|DATE_SUB|INTERVAL|DAY|CURRENT_DATE|EXTRACT|MONTH|HOUR|ROUND|OVER|PARTITION BY|IF|FORMAT_DATE|MIN)\b/g,'<span class="kw">$1</span>').replace(/'([^']*)'/g,'<span class="str">\'$1\'</span>');
+const maskC=c=>S.role&&ROLES[S.role].mask?'••••••••••••'+c.slice(-4):c;
+function cell(r,c){const v=r[c.k];switch(c.t){case'money':return`<td class="num">${fmt(v)}</td>`;case'num':return`<td class="num">${v}</td>`;case'pct':return`<td class="num">${v.toFixed(1)}%</td>`;case'score':return`<td>${scoreB(v)}</td>`;case'st':return`<td><span class="pill p-st">${v}</span></td>`;default:return`<td>${esc(v)}</td>`}}
+
+/* ============ Vistas ============ */
+const TITLES={home:['Panel de transparencia financiera','Estado de datos, nube y alertas recientes'],query:['Consulta en lenguaje natural','Pregunta en español: DataBank AI genera el SQL, lo ejecuta y explica el resultado'],anom:['Detección de anomalías y seguimiento','Operaciones atípicas puntuadas por el modelo de ML y su estado de revisión'],rep:['Reportes y trazabilidad','Resúmenes comprensibles, bitácora de auditoría y descargas']};
+const NEXT={home:{t:'Siguiente paso: haz tu primera consulta en lenguaje natural.',b:'Ir a Consulta',v:'query'},query:{t:'Siguiente paso: inspecciona las operaciones atípicas detectadas.',b:'Ver anomalías',v:'anom'},anom:{t:'Siguiente paso: genera un reporte con resumen y trazabilidad.',b:'Ir a Reportes',v:'rep'},rep:{t:'Flujo completado. Puedes repetir con otro rol o consulta.',b:'Cambiar rol',v:'role'}};
+const hint=v=>{const n=NEXT[v];return`<div class="hint noprint"><span>▸ ${n.t}</span><button class="btn pri sm" data-act="${n.v==='role'?'chooseRole':'nav'}" data-v="${n.v}">${n.b} →</button></div>`};
+
+function renderStepper(){const st=[['rol','1','Seleccionar rol',null],['consulta','2','Consulta NL','query'],['anomalia','3','Inspeccionar anomalías','anom'],['reporte','4','Reporte y trazabilidad','rep']];
+ const cur=st.findIndex(s=>!S.done[s[0]]);
+ $('#stepper').innerHTML=st.map((s,i)=>`<div class="step ${S.done[s[0]]?'done':''} ${i===cur?'cur':''}" data-act="${s[3]?'nav':'chooseRole'}" data-v="${s[3]||''}"><b>${S.done[s[0]]?'✓':s[1]}</b>${s[2]}</div>`).join('')}
+const reduceM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function typeIn(el,txt,ms){clearInterval(el._t);if(reduceM){el.textContent=txt;return}el.textContent='';let i=0;el._t=setInterval(()=>{el.textContent=txt.slice(0,++i);if(i>=txt.length)clearInterval(el._t)},ms)}
+function renderChrome(){const mr=$('#mrole');if(mr)mr.textContent=S.role?S.role.split(' ')[0]:'Rol';const th=TX.filter(t=>t.score>=75&&t.estado!=='Cerrada').length,tl=th>=6?['CRÍTICO','p-alto']:th>=3?['ELEVADO','p-alto']:th>=1?['MODERADO','p-medio']:['BAJO','p-bajo'],te=$('#threat');if(te){te.className='pill '+tl[1];te.textContent='Nivel de amenaza: '+tl[0]}const[t,s]=TITLES[S.view];typeIn($('#title'),t,22);typeIn($('#subtitle'),s,8);
+ document.querySelectorAll('.nav[data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v===S.view));
+ $('#rolebox').innerHTML=`<span>Rol activo</span><b>${S.role||'—'}</b>${S.role?ROLES[S.role].perm:''}`;renderStepper()}
+function render(){renderChrome();$('#view').innerHTML=V[S.view]();if(S.view==='query'&&S.res)drawResult();window.scrollTo(0,0)}
+
+const V={};
+V.home=()=>{
+ const eg=TX.filter(t=>t.tipo==='Egreso'),abiertas=TX.filter(t=>t.score>=75&&t.estado!=='Cerrada'),
+  top=TX.filter(t=>t.score>=75).sort((a,b)=>b.dn-a.dn||b.hora-a.hora).slice(0,5);
+ const wk=[];for(let w=0;w<13;w++){const a=TX.filter(t=>t.dn>=BASE+w*7&&t.dn<BASE+w*7+7&&t.score>=45);wk.push({l:dstr(BASE+w*7).slice(5),alto:a.filter(t=>t.score>=75).length,med:a.filter(t=>t.score<75).length})}
+ const ws=[{name:'Riesgo medio',color:'#ffb454',values:wk.map(x=>x.med)},{name:'Riesgo alto',color:'#ff5c5c',values:wk.map(x=>x.alto)}];
+ return hint('home')+`
+ <div class="grid g4">
+  <div class="card kpi"><div class="l">Operaciones analizadas (90 días)</div><div class="v">${TX.length}</div><div class="d up">▲ 100% con score de riesgo</div></div>
+  <div class="card kpi"><div class="l">Egresos totales</div><div class="v">${fmtS(sum(eg.map(t=>t.monto)))}</div><div class="d sub">${eg.length} operaciones</div></div>
+  <div class="card kpi"><div class="l">Alertas altas abiertas</div><div class="v" style="color:var(--da)">${abiertas.length}</div><div class="d sub">${abiertas.filter(t=>t.estado==='Pendiente').length} sin revisor</div></div>
+  <div class="card kpi"><div class="l">Tiempo de respuesta de consulta</div><div class="v">~2 s</div><div class="d up">vs. 3–5 días en reporte manual</div></div>
+ </div>
+ <div class="grid g2 mt">
+  <div class="card"><h2>Arquitectura en la nube (GCP)</h2>
+   <div class="arch" id="arch">${archHTML()}</div>
+   <div class="row mt"><button class="btn sm" data-act="refreshCloud">↻ Verificar estado</button><span class="sub" id="archts">Última verificación: ahora</span></div></div>
+  <div class="card"><h2>Alertas recientes</h2>${top.map(t=>`<div class="alert" data-act="openTx" data-id="${t.id}">${scoreB(t.score)}<div class="a1"><div><b>${t.id}</b> · ${esc(t.cp)}</div><div class="sub">${t.fecha} ${t.hh} · ${fmt(t.monto)} · ${t.f[0]?esc(t.f[0].l):''}</div></div><span class="pill p-st">${t.estado}</span></div>`).join('')}
+   <div class="mt"><button class="btn sm" data-act="nav" data-v="anom">Ver todas →</button></div></div>
+ </div>
+ <div class="grid g2 mt">
+  <div class="card"><h2>Alertas por semana</h2>${vgroup(wk.map(x=>x.l),ws,v=>Math.round(v))}${legend(ws)}</div>
+  <div class="card"><h2>¿Qué problema atiende?</h2>
+   <ul style="margin:0;padding-left:18px;color:var(--m)"><li>Datos financieros <b style="color:var(--t)">dispersos</b> en sistemas distintos</li><li>Reportes <b style="color:var(--t)">lentos</b> y manuales</li><li>Anomalías y fraudes <b style="color:var(--t)">detectados tarde</b></li><li><b style="color:var(--t)">Barrera técnica</b>: SQL para supervisores y auditores</li></ul>
+   <div class="mt"><button class="btn sm" data-act="problem">Ver problemática y solución</button></div></div>
+ </div>
+ <div class="card mt"><h2>Público objetivo</h2><div class="grid g3">${Object.entries(ROLES).map(([n,r])=>`<div class="card rolecard ${S.role===n?'on':''}" style="background:var(--p2)" data-act="setRole" data-r="${n}"><div class="ic">${r.ic}</div><h3>${n}</h3><div class="sub">${r.d}</div></div>`).join('')}</div></div>`};
+function archHTML(){const N=[['Cloud Storage','Archivos fuente (CSV, PDF)',12],['AlloyDB / Cloud SQL','PostgreSQL transaccional',8],['BigQuery','Analítica y consolidación',210],['Cloud Run','API NL→SQL (serverless)',46],['Vertex AI · Gemini','NL→SQL y resúmenes',620],['Vertex AI · ML','Detección de anomalías',180]];
+ return N.map((n,i)=>`<div class="node"><b><span class="dot"></span>${n[0]}</b><div class="st">${n[1]}</div><div class="st">⏱ <span class="lat">${n[2]}</span> ms</div></div>${i<N.length-1?'<span class="ar">→</span>':''}`).join('')}
+
+V.query=()=>{const r=S.role?ROLES[S.role].pre:Object.keys(Q).slice(0,4);
+ return hint('query')+`
+ <div class="card">
+  <div class="qbox"><textarea id="qin" placeholder="Ej.: ¿Qué contrapartes concentran más monto este mes?"></textarea><button class="btn pri" data-act="runText">Ejecutar ▶</button></div>
+  <div class="sub mt" style="margin-top:8px">Consultas sugeridas para <b>${S.role||'tu rol'}</b>:</div>
+  <div class="chips">${r.map(k=>`<span class="chip" data-act="preset" data-k="${k}">${Q[k].label}</span>`).join('')}<span class="chip" data-act="allq">+ Ver todas</span></div>
+ </div>
+ <div id="pipe" class="pipe"></div>
+ <div id="resbox"></div>`};
+const STEPS=['Interpretando intención (Gemini)','Generando SQL de solo lectura','Ejecutando en BigQuery / AlloyDB','Puntuando anomalías (Vertex AI)','Redactando resumen ejecutivo'];
+async function runQuery(key,text){if(S.running)return;S.running=true;const d=Q[key];$('#qin').value=text||d.nl;
+ const pipe=$('#pipe');$('#resbox').innerHTML='';const t0=performance.now();
+ for(let i=0;i<STEPS.length;i++){pipe.innerHTML=STEPS.map((s,j)=>`<span class="ps ${j<i?'ok':j===i?'act':''}">${j<i?'✓':j===i?'…':''} ${s}</span>`).join('');await sleep(260)}
+ pipe.innerHTML=STEPS.map(s=>`<span class="ps ok">✓ ${s}</span>`).join('');
+ const out=d.run(text||d.nl);S.res={key,out,nl:text||d.nl,ms:Math.round(performance.now()-t0)+Math.round(Math.random()*300)};S.filter='';S.sort=null;S.tab='tabla';S.running=false;
+ S.done.consulta=true;logA('Consulta NL',`"${S.res.nl}" → ${out.rows.length} filas`);renderStepper();drawResult()}
+function drawResult(){const{out,nl,ms}=S.res;const mx=out.rows.length&&out.rows[0].score!==undefined?Math.max(...out.rows.map(r=>r.score)):null;
+ $('#pipe').innerHTML=STEPS.map(s=>`<span class="ps ok">✓ ${s}</span>`).join('');
+ $('#resbox').innerHTML=`
+ <div class="grid g2">
+  <div class="card"><h2>SQL generado (transparente y auditable)</h2><div class="sub">Pregunta: “${esc(nl)}”</div>
+   <pre class="sql">${hlSQL(out.sql)}</pre>
+   <div class="tags"><span class="tag">✓ Solo SELECT</span><span class="tag">✓ Tablas autorizadas</span><span class="tag">✓ LIMIT 1000</span><span class="tag">✓ ${ROLES[S.role||'Auditor'].mask?'Cuentas enmascaradas':'Cuentas visibles (Auditor)'}</span></div>
+   <div class="row mt"><button class="btn sm" data-act="copySQL">Copiar SQL</button><span class="sub">⏱ ${ms} ms · ${out.rows.length} filas</span></div></div>
+  <div class="card"><h2>Resumen ejecutivo</h2><div>${out.sum}</div>
+   ${mx!==null?`<div class="mt row"><span class="sub">Score de anomalía máximo del resultado:</span>${scoreB(mx)} ${lvlB(mx)}</div>`:''}
+   <div class="mt row"><button class="btn sm ok" data-act="toRep">Usar en reporte →</button><button class="btn sm" data-act="exportCSV">Exportar CSV</button></div></div>
+ </div>
+ <div class="card mt"><div class="row" style="justify-content:space-between"><div class="tabs" style="margin:0"><button class="tab ${S.tab==='tabla'?'on':''}" data-act="tab" data-t="tabla">Tabla</button><button class="tab ${S.tab==='graf'?'on':''}" data-act="tab" data-t="graf">Gráfico</button></div>
+  ${S.tab==='tabla'?`<input id="flt" placeholder="Filtrar resultados…" value="${esc(S.filter)}" data-input="flt">`:''}</div>
+  <div id="restab" class="mt"></div></div>`;drawTab()}
+function drawTab(){const{out}=S.res,el=$('#restab');if(!el)return;
+ if(S.tab==='graf'){const c=out.chart;el.innerHTML=c.t==='g'?vgroup(c.labels,c.series,c.f)+legend(c.series):hbar(c.labels,c.values,c.f,c.colors);return}
+ let rows=out.rows.slice();const q=norm(S.filter);if(q)rows=rows.filter(r=>norm(Object.values(r).filter(v=>typeof v!=='object').join(' ')).includes(q));
+ if(S.sort){const{k,d}=S.sort;rows.sort((a,b)=>(a[k]>b[k]?1:a[k]<b[k]?-1:0)*d)}
+ el.innerHTML=`<div class="tw"><table><thead><tr>${out.cols.map(c=>`<th data-act="sort" data-k="${c.k}">${c.l}${S.sort&&S.sort.k===c.k?(S.sort.d>0?' ▲':' ▼'):''}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr class="${r.id?'click':''}" ${r.id?`data-act="openTx" data-id="${r.id}"`:''}>${out.cols.map(c=>cell(r,c)).join('')}</tr>`).join('')||`<tr><td colspan="${out.cols.length}" class="sub">Sin resultados</td></tr>`}</tbody></table></div><div class="sub" style="margin-top:6px">${rows.length} de ${out.rows.length} filas${out.rows[0]&&out.rows[0].id?' · haz clic en una fila para ver trazabilidad':''}</div>`}
+
+V.anom=()=>{const a=TX,al=a.filter(t=>t.score>=75),me=a.filter(t=>t.score>=45&&t.score<75);
+ return hint('anom')+`
+ <div class="grid g4"><div class="card kpi"><div class="l">Riesgo alto</div><div class="v" style="color:var(--da)">${al.length}</div></div><div class="card kpi"><div class="l">Riesgo medio</div><div class="v" style="color:var(--wa)">${me.length}</div></div>
+ <div class="card kpi"><div class="l">Pendientes de revisión</div><div class="v">${a.filter(t=>t.score>=45&&t.estado==='Pendiente').length}</div></div><div class="card kpi"><div class="l">Escaladas a auditoría</div><div class="v">${a.filter(t=>t.estado==='Escalada').length}</div></div></div>
+ <div class="card mt"><div class="row"><select data-change="anl"><option value="">Todos los niveles</option><option>Alto</option><option>Medio</option><option>Bajo</option></select>
+ <select data-change="ans"><option value="">Todos los estados</option><option>Pendiente</option><option>En revisión</option><option>Escalada</option><option>Cerrada</option><option>Falso positivo</option></select>
+ <input placeholder="Buscar contraparte, ID, área…" data-input="anq" style="flex:1;min-width:200px"></div><div id="antab" class="mt"></div></div>`};
+function drawAnom(){const f=S.anf,q=norm(f.q);let rows=TX.filter(t=>t.score>=45||f.lvl==='Bajo'||f.st).filter(t=>(!f.lvl||lvl(t.score)===f.lvl)&&(!f.st||t.estado===f.st)&&(!q||norm(t.id+t.cp+t.area+t.canal).includes(q))).sort((a,b)=>b.score-a.score);
+ $('#antab').innerHTML=`<div class="tw" style="max-height:520px"><table><thead><tr><th>Score</th><th>Nivel</th><th>ID</th><th class="hm">Fecha</th><th>Contraparte</th><th class="hm">Área</th><th>Monto</th><th class="hm">Principal motivo</th><th>Estado</th></tr></thead><tbody>${rows.map(t=>`<tr class="click" data-act="openTx" data-id="${t.id}"><td>${scoreB(t.score)}</td><td>${lvlB(t.score)}</td><td>${t.id}</td><td class="hm">${t.fecha}</td><td>${esc(t.cp)}</td><td class="hm">${t.area}</td><td class="num">${fmt(t.monto)}</td><td class="sub hm">${t.f.length?esc(trunc(t.f.slice().sort((a,b)=>b.p-a.p)[0].l,42)):'—'}</td><td><span class="pill p-st">${t.estado}</span></td></tr>`).join('')}</tbody></table></div><div class="sub" style="margin-top:6px">${rows.length} operaciones</div>`}
+
+function openTx(id){const t=TX.find(x=>x.id===id);if(!t)return;S.done.anomalia=true;renderStepper();
+ const dr=$('#drawer'),c=scBar(t.score);
+ dr.innerHTML=`<div class="row" style="justify-content:space-between"><h2 style="margin:0">${t.id}</h2><button class="btn sm" data-act="closeDrawer">✕</button></div>
+ <div class="sub">${t.fecha} ${t.hh} · ${t.tipo} · ${t.canal}</div>
+ <div class="card mt" style="background:var(--p2)"><div class="row" style="justify-content:space-between"><div><div class="sub">Score de anomalía (Vertex AI)</div><div style="font:400 44px var(--mono);color:${c}">${t.score}<span style="font-size:14px;color:var(--m)"> / 100</span></div></div>${lvlB(t.score)}</div></div>
+ <h3 class="mt">Datos de la operación</h3>
+ <table><tr><td class="sub">Contraparte</td><td>${esc(t.cp)}</td></tr><tr><td class="sub">Monto</td><td><b>${fmt(t.monto)}</b></td></tr><tr><td class="sub">Área</td><td>${t.area}</td></tr><tr><td class="sub">Cuenta origen</td><td class="mono">${maskC(t.cuenta)}</td></tr></table>
+ <h3 class="mt">¿Por qué se marcó? (explicabilidad)</h3>
+ <div class="fac"><span style="width:60%">Línea base del modelo</span><div class="bar"><i style="width:${t.base*2}%"></i></div><b>+${t.base}</b></div>
+ ${t.f.map(x=>`<div class="fac"><span style="width:60%">${esc(x.l)}</span><div class="bar"><i style="width:${Math.min(100,x.p*2.6)}%"></i></div><b>+${x.p}</b></div>`).join('')||'<div class="sub">Sin factores de riesgo relevantes.</div>'}
+ <h3 class="mt">Seguimiento</h3>
+ <div class="row"><select id="dst">${['Pendiente','En revisión','Escalada','Falso positivo','Cerrada'].map(s=>`<option ${s===t.estado?'selected':''}>${s}</option>`).join('')}</select></div>
+ <textarea id="dnote" style="width:100%;margin-top:8px;height:70px;background:#080b0e;border:1px solid var(--b2);padding:8px" placeholder="Nota de auditoría (opcional)…">${esc(t.nota)}</textarea>
+ <div class="row mt"><button class="btn pri" data-act="saveTx" data-id="${t.id}">Guardar seguimiento</button>${S.role==='Administrador Institucional'?`<button class="btn" data-act="assign" data-id="${t.id}">Asignar a Auditoría Interna</button>`:''}</div>`;
+ dr.classList.add('show');logA('Consulta de detalle',`Se inspeccionó ${t.id} (score ${t.score})`)}
+
+V.rep=()=>hint('rep')+`
+ <div class="grid g2" style="grid-template-columns:1fr 1.4fr">
+  <div><div class="card"><h2>Generar reporte</h2>
+   ${[['sem','Resumen ejecutivo semanal'],['crit','Informe de anomalías críticas'],['flujo','Flujo financiero mensual'],['ult','Basado en mi última consulta']].map(r=>`<div class="alert" data-act="genRep" data-r="${r[0]}"><span>📄</span><div class="a1"><div>${r[1]}</div></div><span class="sub">Generar →</span></div>`).join('')}</div>
+  <div class="card mt"><h2>Bitácora de auditoría</h2><div class="sub" style="margin-bottom:8px">Cada acción queda registrada con un hash encadenado (inmutabilidad simulada).</div>
+   <div class="tw" style="max-height:340px"><table><thead><tr><th>Fecha</th><th>Usuario</th><th>Acción</th><th>Hash</th></tr></thead><tbody>${S.log.slice().reverse().map(e=>`<tr title="${esc(e.detail)}"><td>${e.ts}</td><td>${esc(e.user.replace('Administrador Institucional','Admin.'))}</td><td>${e.action}<div class="sub" style="max-width:240px;overflow:hidden;text-overflow:ellipsis">${esc(e.detail)}</div></td><td class="mono">${e.hash}</td></tr>`).join('')}</tbody></table></div></div></div>
+  <div class="card" id="reppane"><h2>Vista previa</h2><div class="sub">Selecciona un reporte para generar el resumen comprensible. Se podrá descargar o imprimir/guardar como PDF.</div></div>
+ </div>`;
+function buildReport(k){const hi=TX.filter(t=>t.score>=75),now=new Date().toLocaleDateString('es-MX',{dateStyle:'long'});let title,body,csv;
+ const tbl=(cols,rows)=>`<table><thead><tr>${cols.map(c=>`<th>${c.l}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${cols.map(c=>`<td>${c.t==='money'?fmt(r[c.k]):esc(r[c.k])}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+ const kv=a=>`<div class="kv">${a.map(x=>`<div><b>${x[1]}</b><br><small>${x[0]}</small></div>`).join('')}</div>`;
+ if(k==='sem'){const w=TX.filter(t=>t.dn>=TODAY-7),h=w.filter(t=>t.score>=75);title='Resumen ejecutivo semanal';csv=w;
+  body=kv([['Operaciones',w.length],['Monto movido',fmt(sum(w.map(t=>t.monto)))],['Alertas altas',h.length]])+`<p>En los últimos 7 días se procesaron <b>${w.length}</b> operaciones. El modelo marcó <b>${h.length}</b> con riesgo alto${h[0]?`, destacando ${h[0].id} (${esc(h[0].cp)}, ${fmt(h[0].monto)})`:''}. Se recomienda revisar primero los pagos fraccionados a Comercializadora Delta 7 y la transferencia internacional nocturna.</p>`+tbl(tcols(['id','fecha','cp','monto','score']),w.filter(t=>t.score>=45).sort((a,b)=>b.score-a.score))}
+ else if(k==='crit'){title='Informe de anomalías críticas';csv=hi;body=kv([['Críticas',hi.length],['Monto expuesto',fmt(sum(hi.map(t=>t.monto)))],['Sin revisor',hi.filter(t=>t.estado==='Pendiente').length]])+`<p>Las operaciones críticas (score ≥ 75) suman <b>${fmt(sum(hi.map(t=>t.monto)))}</b>. Los patrones dominantes son: ${[...new Set(hi.flatMap(t=>t.f.map(x=>x.l.split(' (')[0])))].slice(0,4).join('; ')}.</p>`+tbl(tcols(['id','fecha','cp','monto','score','estado']),hi.sort((a,b)=>b.score-a.score))}
+ else if(k==='flujo'){const o=Q.flujo.run();title='Flujo financiero mensual';csv=o.rows;body=`<p>${o.sum}</p>`+tbl(o.cols,o.rows)}
+ else{if(!S.res){toast('Primero ejecuta una consulta');return null}title='Reporte de consulta: '+S.res.nl;csv=S.res.out.rows;body=`<p>${S.res.out.sum}</p><h3>SQL ejecutado</h3><pre style="background:#f3f6fd;padding:10px;border-radius:8px;white-space:pre-wrap;font-size:12px">${esc(S.res.out.sql)}</pre>`+tbl(S.res.out.cols,S.res.out.rows)}
+ return{title,html:`<h2>${title}</h2><div class="sub" style="color:#667">Generado el ${now} · Rol: ${S.role||'—'} · DataBank AI (datos simulados)</div>${body}<p style="color:#667;font-size:12px;margin-top:18px">Integridad: ${lastHash} · Trazabilidad completa disponible en la bitácora de auditoría.</p>`,csv}}
+function dl(name,mime,data){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type:mime}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)}
+function toCSV(rows){if(!rows||!rows.length)return'';const ks=Object.keys(rows[0]).filter(k=>typeof rows[0][k]!=='object');return'\ufeff'+ks.join(',')+'\n'+rows.map(r=>ks.map(k=>'"'+String(r[k]).replace(/"/g,'""')+'"').join(',')).join('\n')}
+
+/* ============ Modales ============ */
+function showModal(h){$('#modal').innerHTML=h;$('#ov').classList.add('show')}
+const hideModal=()=>$('#ov').classList.remove('show');
+function roleModal(){showModal(`<h2 style="font-size:20px">Bienvenido a DataBank AI</h2><p class="sub">Transparencia y acceso a la información financiera en banca e instituciones públicas. Selecciona tu rol para personalizar permisos y consultas sugeridas.</p>
+ <div class="grid g3">${Object.entries(ROLES).map(([n,r])=>`<div class="card rolecard" style="background:var(--p2)" data-act="setRole" data-r="${n}"><div class="ic">${r.ic}</div><h3>${n}</h3><div class="sub">${r.d}</div><div class="tag" style="margin-top:8px;display:inline-block">${r.perm}</div></div>`).join('')}</div>
+ <div class="row mt"><button class="btn sm" data-act="problem">Ver problemática que atendemos</button></div>`)}
+function problemModal(){showModal(`<div class="row" style="justify-content:space-between"><h2 style="font-size:20px;margin:0">Problemática que atiende DataBank AI</h2><button class="btn sm" data-act="closeModal">✕</button></div>
+ <div class="grid mt" style="grid-template-columns:1fr 1fr">
+ ${[['🧩','Datos fragmentados','La información financiera vive en sistemas, hojas y archivos separados.','Consolidación en BigQuery + AlloyDB/Cloud SQL con Cloud Storage como zona de aterrizaje.'],['🐢','Reportes lentos','Los informes requieren días de trabajo manual de TI.','Consultas en español → resultados y resumen en segundos (Cloud Run + Gemini).'],['🚨','Detección tardía de fraudes','Anomalías se descubren semanas después, en auditorías periódicas.','Modelo de ML en Vertex AI puntúa cada operación y emite alertas explicables.'],['🔐','Barrera técnica de SQL','Auditores y supervisores dependen de especialistas para consultar datos.','Lenguaje natural con SQL transparente, permisos por rol y bitácora de trazabilidad.']].map(p=>`<div class="card" style="background:var(--p2)"><div style="font-size:22px">${p[0]}</div><h3>${p[1]}</h3><div class="sub">${p[2]}</div><div style="margin-top:6px;color:var(--ac2);font-size:13px">➜ ${p[3]}</div></div>`).join('')}</div>
+ <p class="sub mt">Público objetivo: auditores, analistas financieros, administradores institucionales y usuarios autorizados.</p>`)}
+
+/* ============ Eventos ============ */
+const A={
+ nav(el){S.view=el.dataset.v;render();if(S.view==='anom')drawAnom();closeDr()},
+ chooseRole(){roleModal()},closeModal(){hideModal()},problem(){problemModal()},
+ setRole(el){S.role=el.dataset.r;S.done.rol=true;hideModal();logA('Inicio de sesión','Rol seleccionado: '+S.role);toast('Rol: '+S.role);render();if(S.view==='anom')drawAnom()},
+ preset(el){runQuery(el.dataset.k)},
+ runText(){const t=$('#qin').value.trim();if(!t){toast('Escribe una pregunta o elige una sugerida');return}const k=matchQ(t);if(!k){toast('No pude interpretar la pregunta. Prueba una sugerida.');return}runQuery(k,t)},
+ allq(){showModal(`<h2>Consultas disponibles</h2><div class="chips">${Object.entries(Q).map(([k,d])=>`<span class="chip" data-act="presetM" data-k="${k}">${d.label}</span>`).join('')}</div>`)},
+ presetM(el){hideModal();runQuery(el.dataset.k)},
+ tab(el){S.tab=el.dataset.t;drawResult()},
+ sort(el){const k=el.dataset.k;S.sort=S.sort&&S.sort.k===k?{k,d:-S.sort.d}:{k,d:1};drawTab()},
+ copySQL(){navigator.clipboard&&navigator.clipboard.writeText(S.res.out.sql).then(()=>toast('SQL copiado'),()=>toast('No se pudo copiar'))},
+ exportCSV(){dl('databank-consulta.csv','text/csv',toCSV(S.res.out.rows));logA('Exportación','CSV de consulta ('+S.res.out.rows.length+' filas)');toast('CSV descargado')},
+ toRep(){S.view='rep';render();A.genRep({dataset:{r:'ult'}})},
+ openTx(el){openTx(el.dataset.id)},closeDrawer(){closeDr()},
+ saveTx(el){const t=TX.find(x=>x.id===el.dataset.id),e=$('#dst').value;t.nota=$('#dnote').value;if(e!==t.estado){logA('Cambio de estado',`${t.id}: ${t.estado} → ${e}`+(t.nota?' · nota: '+trunc(t.nota,40):''));t.estado=e}else if(t.nota)logA('Nota',`${t.id}: ${trunc(t.nota,60)}`);toast('Seguimiento guardado');closeDr();if(S.view==='anom'){render();drawAnom()}else if(S.view==='query'&&S.res)drawTab()},
+ assign(el){const t=TX.find(x=>x.id===el.dataset.id);t.estado='En revisión';logA('Asignación',`${t.id} asignada a Auditoría Interna`);toast('Asignada a Auditoría Interna');closeDr();if(S.view==='anom'){render();drawAnom()}},
+ refreshCloud(){document.querySelectorAll('.lat').forEach(l=>l.textContent=Math.max(5,Math.round(+l.textContent*(.8+Math.random()*.4))));$('#archts').textContent='Última verificación: '+new Date().toLocaleTimeString('es-MX');logA('Salud de nube','Verificación de servicios GCP: todos operativos');toast('Servicios operativos')},
+ genRep(el){const r=buildReport(el.dataset.r);if(!r)return;S.rep=r;S.done.reporte=true;logA('Reporte generado',r.title);renderStepper();
+  $('#reppane').innerHTML=`<div class="row noprint" style="justify-content:space-between;margin-bottom:10px"><h2 style="margin:0">Vista previa</h2><div class="row"><button class="btn sm" data-act="dlHTML">Descargar .html</button><button class="btn sm" data-act="dlCSV">Descargar .csv</button><button class="btn sm pri" data-act="print">Imprimir / PDF</button></div></div><div class="rep">${r.html}</div>`;
+  $('#reppane').scrollIntoView({behavior:'smooth'})},
+ dlHTML(){dl('databank-reporte.html','text/html','<meta charset="utf-8"><body style="font-family:system-ui;max-width:900px;margin:30px auto">'+S.rep.html);logA('Descarga','Reporte HTML: '+S.rep.title);toast('Reporte descargado')},
+ dlCSV(){dl('databank-reporte.csv','text/csv',toCSV(S.rep.csv));logA('Descarga','Reporte CSV: '+S.rep.title);toast('CSV descargado')},
+ print(){window.print()}
+};
+function closeDr(){$('#drawer').classList.remove('show')}
+document.addEventListener('click',e=>{if(e.target.id==='ov'){hideModal();return}const el=e.target.closest('[data-act]');if(el&&A[el.dataset.act])A[el.dataset.act](el)});
+document.addEventListener('input',e=>{const k=e.target.dataset.input;if(k==='flt'){S.filter=e.target.value;drawTab()}if(k==='anq'){S.anf.q=e.target.value;drawAnom()}});
+document.addEventListener('change',e=>{const k=e.target.dataset.change;if(k==='anl'){S.anf.lvl=e.target.value;drawAnom()}if(k==='ans'){S.anf.st=e.target.value;drawAnom()}});
+document.addEventListener('keydown',e=>{if(e.target.id==='qin'&&e.key==='Enter'&&!e.shiftKey){e.preventDefault();A.runText()}if(e.key==='Escape'){hideModal();closeDr()}});
+setInterval(()=>{const c=$('#clock');if(c)c.textContent=new Date().toLocaleTimeString('es-MX',{hour12:false})+' UTC-6'},1000);
+render();roleModal();
+</script>
+</body>
+</html>
